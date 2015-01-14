@@ -1,0 +1,26 @@
+{
+    "name": "mmanos/laravel-api",
+    "description": "A RESTful API package for Laravel 4.",
+    "keywords": ["laravel", "api", "rest", "restful", "server"],
+    "authors": [
+        {
+            "name": "Mark Manos",
+            "email": "mark@airpac.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.0",
+        "illuminate/support": "4.*",
+        "lucadegasperi/oauth2-server-laravel": "3.0.*"
+    },
+    "autoload": {
+        "classmap": [
+            "src/migrations"
+        ],
+        "psr-0": {
+            "Mmanos\\Api\\": "src/"
+        }
+    },
+    "minimum-stability": "stable",
+    "license": "MIT"
+}
