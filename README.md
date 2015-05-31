@@ -35,34 +35,20 @@ Use the `1.0` branch or the `v1.*` tags for Laravel 4 support.
 
 ## Configuration
 
-#### Config Files
+#### Publish config files and migrations
 
-Publish the `lucadegasperi/oauth2-server-laravel` config file to your application so you can make modifications.
+Publish the `lucadegasperi/oauth2-server-laravel` config file and migrations to your application.
 
 ```console
-$ php artisan vendor:publish --provider="LucaDegasperi\OAuth2Server\OAuth2ServerServiceProvider" --tag="config"
+$ php artisan vendor:publish --provider="LucaDegasperi\OAuth2Server\OAuth2ServerServiceProvider"
 ```
 
 Edit the published config file to fit your authentication needs. See this [configuration options](https://github.com/lucadegasperi/oauth2-server-laravel/wiki/Configuration-Options) page for information.
 
-Publish the default config file to your application so you can make modifications.
+Publish the `mmanos/laravel-api` config file and migrations to your application.
 
 ```console
-$ php artisan vendor:publish --provider="Mmanos\Api\ApiServiceProvider" --tag="config"
-```
-
-#### Publish Migrations
-
-Publish the `lucadegasperi/oauth2-server-laravel` migrations to your application.
-
-```console
-$ php artisan vendor:publish --provider="LucaDegasperi\OAuth2Server\OAuth2ServerServiceProvider" --tag="migrations"
-```
-
-Publish the migrations for this package to your application.
-
-```console
-$ php artisan vendor:publish --provider="Mmanos\Api\ApiServiceProvider" --tag="migrations"
+$ php artisan vendor:publish --provider="Mmanos\Api\ApiServiceProvider"
 ```
 
 And then run the migrations.
@@ -70,6 +56,16 @@ And then run the migrations.
 ```console
 $ php artisan migrate
 ```
+
+Add the following line to your `app/Http/Kernel.php` file in the `$middleware` array to catch any OAuth error and respond appropriately:
+
+```php
+'LucaDegasperi\OAuth2Server\Middleware\OAuthExceptionHandlerMiddleware'
+```
+
+In order to make some the authorization and resource server work correctly with Laravel 5, remove the `App\Http\Middleware\VerifyCsrfToken` line from the `$middleware` array and place it in the $`routeMiddleware` array like this: `'csrf' => 'App\Http\Middleware\VerifyCsrfToken',`.
+
+> **Note:** remember to add the csrf middleware manually on any route where it's appropriate.
 
 #### Handling Exceptions
 
