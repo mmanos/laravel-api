@@ -1,4 +1,4 @@
-<?php namespace Mmanos\Api;
+<?php namespace Mmanos\Api\Exceptions;
 
 use Exception;
 use Illuminate\Support\Facades\Response;

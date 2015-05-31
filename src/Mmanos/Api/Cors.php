@@ -18,10 +18,10 @@ class Cors
 	public static function attachHeaders($response)
 	{
 		$response->headers->set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-		$response->headers->set('Access-Control-Allow-Headers', Config::get('laravel-api::cors_allowed_headers'));
+		$response->headers->set('Access-Control-Allow-Headers', config('api.cors_allowed_headers', 'Origin, Content-Type, Accept, Authorization, X-Requested-With'));
 		$response->headers->set('Access-Control-Allow-Credentials', 'true');
 		
-		if ($exposed = Config::get('laravel-api::cors_exposed_headers')) {
+		if ($exposed = config('api.cors_exposed_headers', 'Pagination-Page, Pagination-Num, Pagination-Total, Pagination-Last-Page')) {
 			$response->headers->set('Access-Control-Expose-Headers', $exposed);
 		}
 	}
@@ -42,12 +42,12 @@ class Cors
 			return true;
 		}
 		
-		if ('*' == Config::get('laravel-api::cors_allowed_origin')) {
+		if ('*' == config('api.cors_allowed_origin', 'client')) {
 			$response->headers->set('Access-Control-Allow-Origin', '*');
 			return true;
 		}
 		
-		if ('client' == Config::get('laravel-api::cors_allowed_origin')) {
+		if ('client' == config('api.cors_allowed_origin', 'client')) {
 			$client = Authentication::instance()->client();
 			if (empty($client) || empty($client->endpoints())) {
 				return false;

@@ -2,7 +2,6 @@
 
 use Exception;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Response;
@@ -24,8 +23,6 @@ class ApiServiceProvider extends ServiceProvider
 	 */
 	public function boot()
 	{
-		$this->package('mmanos/laravel-api');
-		
 		$this->bootAuthResourceOwner();
 		$this->bootFilters();
 	}
@@ -40,10 +37,17 @@ class ApiServiceProvider extends ServiceProvider
 		$this->app->register('LucaDegasperi\OAuth2Server\Storage\FluentStorageServiceProvider');
 		$this->app->register('LucaDegasperi\OAuth2Server\OAuth2ServerServiceProvider');
 		
-		$this->app->bind('command.laravel-api.migrations', 'Mmanos\Api\Console\MigrationsCommand');
-		$this->commands('command.laravel-api.migrations');
+		$config_path = __DIR__.'/../../config/api.php';
+		$this->mergeConfigFrom($config_path, 'api');
+		$this->publishes([
+			$config_path => config_path('api.php')
+		], 'config');
 		
-		$this->registerHttpExceptionHandler();
+		$m_from = __DIR__ . '/../../migrations/';
+		$m_to = $this->app['path.database'] . '/migrations/';
+		$this->publishes([
+			$m_from.'2015_05_30_000000_oauth_server.php' => $m_to.'2015_05_30_000000_oauth_server.php',
+		], 'migrations');
 	}
 	
 	/**
@@ -64,9 +68,9 @@ class ApiServiceProvider extends ServiceProvider
 	 */
 	protected function bootAuthResourceOwner()
 	{
-		if (Config::get('laravel-api::auth_resource_owner')
+		if (config('api.auth_resource_owner', true)
 			&& !Auth::check()
-			&& Input::get('access_token', Request::header('Authorization'))
+			&& Request::input('access_token', Request::header('Authorization'))
 		) {
 			if ($user_id = Authentication::instance()->userId()) {
 				Auth::onceUsingId($user_id);
@@ -81,8 +85,8 @@ class ApiServiceProvider extends ServiceProvider
 	 */
 	protected function bootFilters()
 	{
-		if (Config::get('laravel-api::cors_enabled')) {
-			$this->app->before(function ($request) {
+		if (config('api.cors_enabled', true)) {
+			$this->app['router']->before(function ($request) {
 				if (Request::header('Origin') && $_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 					$response = Response::make(null, 204);
 					Cors::attachHeaders($response);
@@ -91,7 +95,7 @@ class ApiServiceProvider extends ServiceProvider
 				}
 			});
 			
-			$this->app->after(function ($request, $response) {
+			$this->app['router']->after(function ($request, $response) {
 				if (Request::header('Origin')) {
 					Cors::attachHeaders($response);
 					Cors::attachOriginHeader($response, Request::header('Origin'));
@@ -108,25 +112,6 @@ class ApiServiceProvider extends ServiceProvider
 			$scope = str_replace('.', ':', $scope);
 			
 			Api::checkScope($scope);
-		});
-	}
-	
-	/**
-	 * Register a custom HttpException shutdown handler.
-	 *
-	 * @return void
-	 */
-	protected function registerHttpExceptionHandler()
-	{
-		$this->app->error(function(HttpException $e) {
-			$response = $e->response();
-			
-			if (Request::header('Origin')) {
-				Cors::attachHeaders($response);
-				$response->headers->set('Access-Control-Allow-Origin', Request::header('Origin'));
-			}
-			
-			return $response;
 		});
 	}
 }

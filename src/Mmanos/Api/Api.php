@@ -1,6 +1,7 @@
 <?php namespace Mmanos\Api;
 
 use Illuminate\Support\Facades\Request;
+use Mmanos\Api\Exceptions\HttpException;
 
 class Api
 {

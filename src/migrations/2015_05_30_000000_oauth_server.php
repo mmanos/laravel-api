@@ -2,7 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 
-class OauthServer2 extends Migration
+class OauthServer extends Migration
 {
 	/**
 	 * Run the migrations.

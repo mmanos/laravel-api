@@ -1,6 +1,7 @@
 <?php namespace Mmanos\Api;
 
-use Illuminate\Pagination\Paginator;
+use Illuminate\Pagination\LengthAwarePaginator as Paginator;
+//use Illuminate\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Database\Eloquent\Collection;
@@ -57,10 +58,10 @@ trait ControllerTrait
 				}
 				
 				$response->setContent($output)
-					->header('Pagination-Page', $action_response->getCurrentPage())
-					->header('Pagination-Num', $action_response->getPerPage())
-					->header('Pagination-Total', $action_response->getTotal())
-					->header('Pagination-Last-Page', $action_response->getLastPage());
+					->header('Pagination-Page', $action_response->currentPage())
+					->header('Pagination-Num', $action_response->perPage())
+					->header('Pagination-Total', $action_response->total())
+					->header('Pagination-Last-Page', $action_response->lastPage());
 				break;
 				
 			case $action_response instanceof Response:

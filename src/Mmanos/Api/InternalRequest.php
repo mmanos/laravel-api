@@ -1,6 +1,5 @@
 <?php namespace Mmanos\Api;
 
-use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Request;
 
@@ -80,9 +79,9 @@ class InternalRequest
 		
 		// Replace input (maintain api auth parameters).
 		Request::replace(array_merge($request->input(), array(
-			'client_id'     => Input::get('client_id'),
-			'client_secret' => Input::get('client_secret'),
-			'access_token'  => Input::get('access_token'),
+			'client_id'     => Request::input('client_id'),
+			'client_secret' => Request::input('client_secret'),
+			'access_token'  => Request::input('access_token'),
 		)));
 		
 		// Dispatch request.

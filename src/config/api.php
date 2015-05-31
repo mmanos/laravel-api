@@ -59,6 +59,6 @@ return array(
 	|
 	*/
 
-	'cors_exposed_headers' => '',
+	'cors_exposed_headers' => 'Pagination-Page, Pagination-Num, Pagination-Total, Pagination-Last-Page',
 
 );

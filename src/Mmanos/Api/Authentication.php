@@ -2,7 +2,7 @@
 
 use Exception;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Input;
+use Illuminate\Support\Facades\Request;
 use LucaDegasperi\OAuth2Server\Facades\AuthorizerFacade as Authorizer;
 
 class Authentication
@@ -44,8 +44,8 @@ class Authentication
 			return null;
 		}
 		
-		if (Input::get('client_id')) {
-			$this->client_id = Input::get('client_id');
+		if (Request::input('client_id')) {
+			$this->client_id = Request::input('client_id');
 		}
 		else if ($id = Authorizer::getClientId()) {
 			$this->client_id = $id;
@@ -136,8 +136,8 @@ class Authentication
 			return $this->check = true;
 		} catch (Exception $e) {}
 		
-		$client_id     = Input::get('client_id');
-		$client_secret = Input::get('client_secret');
+		$client_id     = Request::input('client_id');
+		$client_secret = Request::input('client_secret');
 		if (!$client_id || !$client_secret) {
 			return $this->check = false;
 		}

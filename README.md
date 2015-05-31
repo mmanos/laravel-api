@@ -1,4 +1,4 @@
-# RESTful API package for Laravel 4
+# RESTful API package for Laravel 5
 
 This is an API package for the Laravel framework. It allows you to build a flexible RESTful API that can be consumed externally and by your own application.
 
@@ -29,30 +29,40 @@ Add a class alias to `app/config/app.php`, within the `aliases` array.
 )
 ```
 
+## Laravel 4
+
+Use the `1.0` branch or the `v1.*` tags for Laravel 4 support.
+
 ## Configuration
 
 #### Config Files
 
-Publish the default config file to your application so you can make modifications.
-
-```console
-$ php artisan config:publish mmanos/laravel-api
-```
-
 Publish the `lucadegasperi/oauth2-server-laravel` config file to your application so you can make modifications.
 
 ```console
-$ php artisan config:publish lucadegasperi/oauth2-server-laravel
+$ php artisan vendor:publish --provider="LucaDegasperi\OAuth2Server\OAuth2ServerServiceProvider" --tag="config"
 ```
 
 Edit the published config file to fit your authentication needs. See this [configuration options](https://github.com/lucadegasperi/oauth2-server-laravel/wiki/Configuration-Options) page for information.
 
-#### Publish Migrations
-
-Publish all migration files to your application. This will publish the `lucadegasperi/oauth2-server-laravel` migrations as well.
+Publish the default config file to your application so you can make modifications.
 
 ```console
-$ php artisan laravel-api:migrations
+$ php artisan vendor:publish --provider="Mmanos\Api\ApiServiceProvider" --tag="config"
+```
+
+#### Publish Migrations
+
+Publish the `lucadegasperi/oauth2-server-laravel` migrations to your application.
+
+```console
+$ php artisan vendor:publish --provider="LucaDegasperi\OAuth2Server\OAuth2ServerServiceProvider" --tag="migrations"
+```
+
+Publish the migrations for this package to your application.
+
+```console
+$ php artisan vendor:publish --provider="Mmanos\Api\ApiServiceProvider" --tag="migrations"
 ```
 
 And then run the migrations.
@@ -60,6 +70,21 @@ And then run the migrations.
 ```console
 $ php artisan migrate
 ```
+
+#### Handling Exceptions
+
+We need to modify the exception handler to properly format exceptions thrown by this package. Update the `App/Exceptions/Handler.php` file to use the exception handler from this package.
+
+```php
+use Exception;
+use Mmanos\Api\Exceptions\Handler as ExceptionHandler;
+
+class Handler extends ExceptionHandler {
+	...
+}
+```
+
+Then add the `Mmanos\Api\Exceptions\HttpException` exception class to the `$dontReport` array so regular HTTP Exceptions are not reported.
 
 ## Controllers
 
